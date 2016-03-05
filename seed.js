@@ -4,9 +4,9 @@ var Q = require('Q');
 
 var CONFIG = {
     INSTRUMENT: 'EUR_USD',
-    GRANULARITY: 'M5',
-    START: new Date('1 Jan 2011'),
-    END: new Date(),
+    GRANULARITY: 'M1',
+    START: new Date('1 Jan 2015'),
+    END: new Date('1 Jan 2016'),
     MYSQL: {
         host: 'localhost',
         port: 3306,
@@ -26,6 +26,8 @@ var seed = function () {
     var fetch = function () {
         var query = '';
         var inserts = [];
+        var second = Q.defer();
+        setTimeout(second.resolve, 2000);
         Oanda.request({
             qs: {
                 instrument: CONFIG.INSTRUMENT,
@@ -50,7 +52,7 @@ var seed = function () {
                         dfd.reject(error);
                     } else {
                         numRecordsCreated = numRecordsCreated + response.affectedRows;
-                        fetch();
+                        second.promise.then(fetch);
                     }
                 });
             }
@@ -68,7 +70,13 @@ var seed = function () {
         if (error) {
             dfd.reject(error);
         } else {
-            fetch();
+            connection.query('TRUNCATE TABLE ' + table, function (error) {
+                if (error) {
+                    dfd.reject(error);
+                } else {
+                    fetch();
+                }
+            });
         }
     });
     return dfd.promise;

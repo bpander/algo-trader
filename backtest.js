@@ -6,9 +6,9 @@ var CandleCollection = require('./CandleCollection');
 
 var CONFIG = {
     INSTRUMENT: 'EUR_USD',
-    GRANULARITY: 'D',
-    START: new Date('01 Jan 2014'),
-    END: new Date(),
+    GRANULARITY: 'M1',
+    START: new Date('01 Jan 2015'),
+    END: new Date('05 Jan 2015'),
     MYSQL: {
         host: 'localhost',
         port: 3306,
